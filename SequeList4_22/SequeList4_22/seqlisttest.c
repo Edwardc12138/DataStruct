@@ -53,13 +53,13 @@ int main()
 	srand((unsigned)time(NULL));
 	for (int i = 0; i < 50; ++i)
 	{
-		PushBackSeqList(seqlist, rand() % 50);
+		PushBackSeqList(seqlist, rand() % 2);
 	}
-	BubbleSortSeqList(seqlist);
+	//BubbleSortSeqList(seqlist);
 	PrintSeqList(seqlist);
 	//printf("%d\n", BinarySearchSeqList(seqlist, 9));
 
-	RemoveAllSeqList(seqlist, 25);
+	RemoveAllSeqList(seqlist, 1);
 	PrintSeqList(seqlist);
 
 	DestroySeqList(seqlist);

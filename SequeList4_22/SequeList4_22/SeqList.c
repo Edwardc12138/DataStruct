@@ -217,12 +217,24 @@ int BinarySearchSeqList(SeqListPtr slp, SLDataType data)
 void RemoveAllSeqList(SeqListPtr slp, SLDataType data)
 {
 	assert(slp);
-	for (int i = 0; i < slp->_size; ++i)	// 遍历顺序表
+	//for (int i = 0; i < slp->_size; ++i)	// 遍历顺序表
+	//{
+	//	if (slp->_data[i] == data)	// 找到与data相等元素的位置
+	//	{
+	//		EraseSeqList(slp, i);	//删除该位置
+	//		--i;	// 删除后元素向前移动
+	//	}
+	//}
+
+	int count = 0;
+	for (size_t cur = 0; cur < slp->_size; ++cur)
 	{
-		if (slp->_data[i] == data)	// 找到与data相等元素的位置
+		if (slp->_data[cur] == data)
+			++count;
+		else
 		{
-			EraseSeqList(slp, i);	//删除该位置
-			--i;	// 删除后元素向前移动
+			slp->_data[cur - count] = slp->_data[cur];
 		}
 	}
+	slp->_size -= count;
 }
