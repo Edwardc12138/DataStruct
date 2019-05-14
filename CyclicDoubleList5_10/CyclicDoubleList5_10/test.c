@@ -19,18 +19,18 @@ int main() {
 	//RemoveCDLNode(head, 2);
 	//PrintCDL(head);
 
-	//PushFrontData(head, 3);
-	//PushFrontData(head, 1);
-	//PushFrontData(head, 2);
+	PushFrontData(head, 3);
+	PushFrontData(head, 1);
+	PushFrontData(head, 2);
 	//PrintCDL(head);
 	//PopFrontCDLNode(head);
 	//PopFrontCDLNode(head);
 	//PopFrontCDLNode(head);
 	//PrintCDL(head);
 
-	//PushBackData(head, 4);
-	//PushBackData(head, 6);
-	//PushBackData(head, 8);
+	PushBackData(head, 4);
+	PushBackData(head, 6);
+	PushBackData(head, 8);
 	//PrintCDL(head);
 	//PopBackCDLNode(head);
 	//PopBackCDLNode(head);
@@ -40,12 +40,21 @@ int main() {
 	//ClearCDL(head);
 	//PrintCDL(head);
 	//DesroyCDL(&head);
-	if (SearchCDLNode(head, 8)) {
-		printf("找到了\n");
-	}
-	else {
-		printf("没找到\n");
-	}
+
+	//if (SearchCDLNode(head, 8)) {
+	//	printf("找到了\n");
+	//}
+	//else {
+	//	printf("没找到\n");
+	//}
+
+	PushFrontData(head, 3);
+	PushFrontData(head, 1);
+	PushFrontData(head, 2);
+	PrintCDL(head);
+
+	RemoveAllData(head, 2);
+	PrintCDL(head);
 
 	system("pause");
 	return 0;

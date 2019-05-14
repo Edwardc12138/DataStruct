@@ -179,3 +179,21 @@ CDLNodePtr SearchCDLNode(CDLNodePtr head, CDLDataType data) {
 	}
 	return NULL;	// 没找到返回NULL
 }
+
+void RemoveAllData(CDLNodePtr head, CDLDataType data) {
+	assert(head);
+
+	CDLNodePtr pcur = head->_next;
+	while (pcur != head) {
+		if (pcur->_data == data) {
+			pcur->_front->_next = pcur->_next;	// pcur前一个指向pcur后一个
+			pcur->_next->_front = pcur->_front;	// pcur后一个指向pcur前一个
+			CDLNodePtr pdel = pcur;
+			pcur = pdel->_next;
+			free(pdel);
+		}
+		else {
+			pcur = pcur->_next;
+		}
+	}
+}

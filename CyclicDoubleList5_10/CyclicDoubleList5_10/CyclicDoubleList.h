@@ -41,3 +41,6 @@ void DesroyCDL(CDLNodePtr *head);
 
 // 查找
 CDLNodePtr SearchCDLNode(CDLNodePtr head, CDLDataType data);
+
+// 移除与data相同的全部节点
+void RemoveAllData(CDLNodePtr head, CDLDataType data);
