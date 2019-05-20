@@ -1,0 +1,61 @@
+/*
+// Definition for a Node.
+class Node {
+public:
+    int val;
+    Node* next;
+    Node* random;
+
+    Node() {}
+
+    Node(int _val, Node* _next, Node* _random) {
+        val = _val;
+        next = _next;
+        random = _random;
+    }
+};
+*/
+class Solution {
+public:
+    Node* copyRandomList(Node* head) {
+        if(!head) {
+            return NULL;
+        }
+        
+        // 在每一个节点后插入该节点的拷贝
+        Node* pcur = head;
+        while(pcur) {
+            Node* node = new Node(pcur->val, pcur->next, NULL);
+            node->next = pcur->next;
+            pcur->next = node;
+            pcur = pcur->next->next;
+        }
+        
+        // 拷贝随机指针并建立新链表
+        pcur = head;
+        while(pcur) {
+            if(pcur->random){
+                pcur->next->random = pcur->random->next;
+            }
+            else {
+                pcur->next->random = NULL;
+            }
+            pcur = pcur->next->next;
+        }
+        
+        // 连接新链表
+        pcur = head;
+        Node* pnew = pcur->next;
+        Node* pnew_cur = pnew;
+        while(pcur) {
+            pcur->next = pnew_cur->next;
+            pcur = pcur->next;
+            if(pcur) {
+                pnew_cur->next = pcur->next;
+                pnew_cur = pnew_cur->next;
+            }
+        }
+        pnew_cur->next = NULL;
+        return pnew;
+    }
+};

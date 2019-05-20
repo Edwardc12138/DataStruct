@@ -211,3 +211,36 @@ void RemoveAllSLNode(SLNodePtr * head, SLDataType data) {
 		}
 	}
 }
+
+SLNodePtr deleteDuplication(SLNodePtr pHead) {
+	if (!pHead && !pHead->_next) {
+		return pHead;
+	}
+
+	SLNodePtr ppre = NULL;
+	SLNodePtr pcur = pHead;
+	while (pcur && pcur->_next) {
+		if (pcur->_data == pcur->_next->_data) {
+			SLNodePtr pdel = pcur->_next;
+			while (pdel && pdel->_data == pcur->_data) {
+				pcur->_next = pdel->_next;
+				free(pdel);
+				pdel = pcur->_next;
+			}
+			free(pcur);
+			if (ppre) {
+				ppre->_next = pdel;
+				pcur = ppre->_next;
+			}
+			else {
+				pHead = pdel;
+				pcur = pHead;
+			}
+		}
+		else {
+			ppre = pcur;
+			pcur = ppre->_next;
+		}
+	}
+	return pHead;
+}

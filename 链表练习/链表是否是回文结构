@@ -1,0 +1,60 @@
+/*
+struct ListNode {
+    int val;
+    struct ListNode *next;
+    ListNode(int x) : val(x), next(NULL) {}
+};*/
+class PalindromeList {
+public:
+    bool chkPalindrome(ListNode* A) {
+        // write code here
+        if(!A) {
+            return false;
+        }
+        
+        ListNode* pfast = A;
+        ListNode* pmid = A;
+        // 找链表的中点
+        while(pfast && pfast->next) {
+            pfast = pfast->next->next;
+            pmid = pmid->next;
+        }
+        // 翻转后半段链表
+        ListNode* ppre = pmid;
+        ListNode* pcur = ppre->next;
+        ListNode* pnext = pcur->next;
+        
+        while(pcur) {
+            pcur->next = ppre;
+            ppre = pcur;
+            pcur = pnext;
+            pnext = pcur->next;
+        }
+        // 判断
+        ListNode* pfront = A;
+        ListNode* prear = ppre;
+        bool ret = true;
+        while(pfront != prear) {
+            if(pfront->val != prear->val) {
+                ret = false;
+                break;
+            }
+            if(pfront->next == prear){
+                break;
+            }
+            pfront = pfront->next;
+            prear = prear->next;
+        }
+        // 还原链表
+        pcur = ppre->next;
+        pnext = pcur->next;
+        ppre->next = NULL;
+        while(pcur != pmid) {
+            pcur->next = ppre;
+            ppre = pcur;
+            pcur = pnext;
+            pnext = pcur->next;
+        }
+        return ret;
+    }
+};

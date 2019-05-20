@@ -1,0 +1,71 @@
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     struct ListNode *next;
+ * };
+ */
+struct ListNode *getIntersectionNode(struct ListNode *headA, struct ListNode *headB) {
+/*   if(!headA || !headB) {
+ *      return NULL;
+ *  }
+ *  
+ *  int lenA = 0;
+ *  int lenB = 0;
+ *  
+ *  // A表长度
+ *  struct ListNode* pcurA = headA;
+ *  while(pcurA) {
+ *      ++lenA;
+ *      pcurA = pcurA->next;
+ *  }
+ *  
+ *  // B表长度
+ *  struct ListNode* pcurB = headB;
+ *  while(pcurB) {
+ *      ++lenB;
+ *      pcurB = pcurB->next;
+ *  }
+ *  
+ *  pcurA = headA;
+ *  pcurB = headB;
+ *  
+ *  // A表长,先向后移动
+ *  if(lenA > lenB) {
+ *      int diff = lenA - lenB;
+ *      for (int i = 0; i < diff; ++i) {
+ *          pcurA = pcurA->next;
+ *      }
+ *  }
+ *  //  B表长,先向后移动
+ *  else if(lenA < lenB) {
+ *      int diff = lenB - lenA;
+ *      for (int i = 0; i < diff; ++i) {
+ *          pcurB = pcurB->next;
+ *      }
+ *  }
+ *  
+ *  // 判断
+ *  while(pcurA && pcurB) {
+ *      if(pcurA == pcurB) {
+ *          return pcurA;
+ *      }
+ *      pcurA = pcurA->next;
+ *      pcurB = pcurB->next;
+ *  }
+ *  return NULL;
+ */
+    
+    if(!headA || !headB) {
+        return NULL;
+    }
+    
+    struct ListNode* pcurA = headA;
+    struct ListNode* pcurB = headB;
+    
+    while(pcurA != pcurB) {
+        pcurA = (!pcurA ? headB : pcurA->next);
+        pcurB = (!pcurB ? headA : pcurB->next);
+    }
+    return pcurA;
+}

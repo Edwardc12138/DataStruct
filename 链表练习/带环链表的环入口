@@ -1,0 +1,38 @@
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     struct ListNode *next;
+ * };
+ */
+struct ListNode *detectCycle(struct ListNode *head) {
+    if(!head) {
+        return NULL;
+    }
+    
+    // 判断是否有环
+    int flag = 0;
+    
+    struct ListNode* pfast = head;
+    struct ListNode* pslow = head;
+    while(pfast && pfast->next) {
+        pfast = pfast->next->next;
+        pslow = pslow->next;
+        if(pfast == pslow) {
+            flag = 1;
+            break;
+        }
+    }
+    
+    if(!flag) {
+        return NULL;
+    }
+    
+    // 找入口
+    struct ListNode* pcur = head;
+    while(pcur != pslow) {
+        pcur = pcur->next;
+        pslow = pslow->next;
+    }
+    return pcur;
+}
