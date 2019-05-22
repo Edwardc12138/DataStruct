@@ -1,0 +1,205 @@
+
+typedef int SDT;
+
+typedef struct {
+    SDT* _data; // 存储数据
+    int _top;   // 栈顶
+    int _size;  // 数据个数
+    int _cap;   // 容量
+} Stack;
+
+// 初始化
+void InitStack(Stack* ps) {
+    if(!ps) {
+        return;
+    }
+    
+    ps->_data = (SDT*)malloc(sizeof(SDT));
+    if(!ps->_data) {
+        return;
+    }
+    
+    ps->_top = -1;  // 栈空,无栈顶
+    ps->_size = 0;
+    ps->_cap = 1;   // 初始空间为1
+}
+
+// 销毁
+void DestroyStack(Stack* ps) {
+    if(!ps) {
+        return;
+    }
+    
+    free(ps->_data);
+    ps->_top = -1;
+    ps->_size = 0;
+    ps->_cap = 0;
+}
+
+// 重新分配空间
+void ResizeStack(Stack* ps) {
+    if(!ps) {
+        return;
+    }
+    
+    int new_cap = ps->_cap * 2;
+    SDT* new_data = (SDT*)malloc(sizeof(SDT) * new_cap);
+    if(!new_data) {
+        return;
+    }
+    
+    // 搬运数据
+    int i;
+    for(i = 0; i < ps->_size; ++i) {
+        new_data[i] = ps->_data[i];
+    }
+    free(ps->_data);
+    ps->_data = new_data;
+    ps->_cap = new_cap;
+}
+
+// 入栈
+void PushStack(Stack* ps, SDT data) {
+    if(!ps) {
+        return;
+    }
+    
+    if(ps->_size == ps->_cap) { // 栈满,重新分配空间
+        ResizeStack(ps);
+    }
+    
+    ps->_data[ps->_size++] = data;
+    ++ps->_top;    
+}
+
+// 出栈
+SDT PopStack(Stack* ps) {
+    if(!ps) {
+        return -1;
+    }
+    
+    SDT ret = -1;
+    if(ps->_size) { // 栈不为空
+        ret = ps->_data[ps->_top--];
+        --ps->_size;
+    }
+    return ret;
+}
+
+// 栈顶元素
+SDT TopStack(Stack* ps) {
+    if(!ps) {
+        return 0;
+    }
+    
+    if(ps->_size) {
+        return ps->_data[ps->_top];
+    }
+    return 0;
+}
+
+// 最小栈实现
+typedef struct {
+    Stack* _dt;     // 数据栈
+    Stack* _min;    // 最小栈
+} MinStack;
+
+/** initialize your data structure here. */
+
+MinStack* minStackCreate() {
+    MinStack* pms = (MinStack*)malloc(sizeof(MinStack));
+    if(!pms) {
+        return NULL;
+    }
+    
+    // 初始化成员
+    pms->_dt = (Stack*)malloc(sizeof(Stack));
+    if(!pms->_dt) {
+        free(pms);  // 初始化失败,释放最小栈
+        return NULL;
+    }
+    pms->_min = (Stack*)malloc(sizeof(Stack));
+    if(!pms->_min) {
+        free(pms->_dt); // 初始化失败,释放数据栈
+        free(pms);  // 初始化失败,释放最小栈
+        return NULL;
+    }
+    
+    InitStack(pms->_dt);
+    InitStack(pms->_min);
+    return pms;
+}
+
+void minStackPush(MinStack* obj, int x) {
+    if(!obj) {
+        return;
+    }
+    
+    PushStack(obj->_dt, x); // 保存数据
+    // 如果最小栈不为空且最小栈栈顶元素小于x,最小栈不插入
+    if(obj->_min->_size && TopStack(obj->_min) < x) {
+        return;
+    }
+    PushStack(obj->_min, x);
+}
+
+void minStackPop(MinStack* obj) {
+    if(!obj) {
+        return;
+    }
+    
+    if(obj->_dt->_size) {   // 如果栈不为空
+        if(TopStack(obj->_dt) == TopStack(obj->_min)) { // 如果数据栈和最小栈栈顶元素相同
+            PopStack(obj->_min);    // 弹出最小栈
+        }
+        PopStack(obj->_dt);
+    }
+}
+
+int minStackTop(MinStack* obj) {
+    if(!obj) {
+        return;
+    }
+    
+    if(obj->_dt->_size) {   // 栈不空
+        return TopStack(obj->_dt);
+    }
+    return -1;
+}
+
+int minStackGetMin(MinStack* obj) {
+    if(!obj) {
+        return -1;
+    }
+    
+    if(obj->_min->_size) {  // 栈不空
+        return TopStack(obj->_min);
+    }
+    return -1;
+}
+
+void minStackFree(MinStack* obj) {
+    if(!obj) {
+        return;
+    }
+    
+    DestroyStack(obj->_dt);
+    DestroyStack(obj->_min);
+    free(obj->_dt);
+    free(obj->_min);
+    free(obj);
+}
+
+/**
+ * Your MinStack struct will be instantiated and called as such:
+ * MinStack* obj = minStackCreate();
+ * minStackPush(obj, x);
+ 
+ * minStackPop(obj);
+ 
+ * int param_3 = minStackTop(obj);
+ 
+ * int param_4 = minStackGetMin(obj);
+ 
+ * minStackFree(obj);
+*/
