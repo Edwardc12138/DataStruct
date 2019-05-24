@@ -1,0 +1,235 @@
+
+typedef int SDataType;
+
+// 队列实现
+typedef struct QNode{   // 队列节点
+    SDataType _data;
+    struct QNode* _next;
+} QNode;
+
+typedef struct {    // 队列
+    int _size;  // 队列长度
+    QNode* _head;   // 队头
+    QNode* _rear;   // 队尾
+} Queue;
+
+// 初始化队列
+void InitQueue(Queue* pq) {
+    if(!pq) {
+        return;
+    }
+    
+    pq->_size = 0;
+    pq->_head = NULL;
+    pq->_rear = NULL;
+}
+
+// 销毁队列
+void DestroyQueue(Queue* pq) {
+    if(!pq) {
+        return;
+    }
+    // 释放节点
+    QNode* pcur = pq->_head;
+    while(pcur) {
+        pq->_head = pcur->_next;
+        free(pcur);
+        pcur = pq->_head;
+    }
+    pq->_rear = NULL;
+    pq->_size = 0;
+}
+
+// 新建节点
+QNode* _NewNode(SDataType data) {
+    QNode* node = (QNode*)malloc(sizeof(QNode));
+    if(!node) {
+        return NULL;
+    }
+    
+    node->_data = data;
+    node->_next = NULL;
+    return node;
+}
+
+// 入队
+void PushBack(Queue* pq, SDataType data) {
+    if(!pq) {
+        return;
+    }
+    
+    QNode* node = _NewNode(data);
+    if(!node) {
+        return;
+    }
+    // 空队列
+    if(!pq->_head) {
+        pq->_head = pq->_rear = node;
+    }
+    else {
+        pq->_rear->_next = node;
+        pq->_rear = node;
+    }
+    ++pq->_size;
+}
+
+// 出队
+SDataType PopFront(Queue* pq) {
+    if(!pq || !pq->_size) {
+        return -1;
+    }
+    
+    QNode* pdel = pq->_head;
+    pq->_head = pdel->_next;    // 队头后移
+    SDataType ret = pdel->_data;
+    free(pdel);
+    return ret;
+}
+
+// 元素个数
+int QueueSize(Queue* pq) {
+    if(!pq) {
+        return -1;
+    }
+    
+    return pq->_size;
+}
+
+// 是否是空队
+int EmptyQueue(Queue* pq) {
+    if(!pq) {
+        return -1;
+    }
+    return pq->_size == 0;
+}
+
+// 栈实现
+typedef struct {
+    Queue* _q1;
+    Queue* _q2;
+} MyStack;
+
+/** Initialize your data structure here. */
+
+MyStack* myStackCreate() {
+    MyStack* ps = (MyStack*)malloc(sizeof(MyStack));
+    if(!ps) {
+        return NULL;
+    }
+    
+    ps->_q1 = (Queue*)malloc(sizeof(Queue));
+    if(!ps->_q1) {
+        free(ps);   //队列初始化失败,释放栈
+        return NULL;
+    }
+    
+    ps->_q2 = (Queue*)malloc(sizeof(Queue));
+    if(!ps->_q2) {
+        free(ps->_q1);
+        free(ps);   //队列初始化失败,释放栈
+        return NULL;
+    }
+    // 初始化成员
+    InitQueue(ps->_q1);
+    InitQueue(ps->_q2);
+    return ps;
+}
+
+/** Push element x onto stack. */
+void myStackPush(MyStack* obj, int x) {
+    if(!obj) {
+        return;
+    }
+    
+    if(obj->_q2->_head) {  // 如果_q2不为空,则向_q2中入队
+        PushBack(obj->_q2, x);
+    }
+    else {                 // 否则,向_q1中入队
+        PushBack(obj->_q1, x);
+    }
+}
+
+/** Removes the element on top of the stack and returns that element. */
+int myStackPop(MyStack* obj) {
+    if(!obj) {
+        return -1;
+    }
+    
+    Queue* pq1 = obj->_q1;
+    Queue* pq2 = obj->_q2;
+    
+    if(pq1->_head) {  // 如果_q1不为空
+        // 将_q1除了最后一个数据以外的数据移动到_q2
+        while(pq1->_head->_next) {
+            PushBack(pq2, PopFront(pq1));
+        }
+        return PopFront(pq1);
+    }
+    else if(pq2->_head) {   // 如果_q2不为空
+        // 将_q2除了最后一个数据以外的数据移动到_q1
+        while(pq2->_head->_next) {
+            PushBack(pq1, PopFront(pq2));
+        }
+        return PopFront(pq2);
+    }
+    return -1;
+}
+
+/** Get the top element. */
+int myStackTop(MyStack* obj) {
+    if(!obj) {
+        return -1;
+    }
+    
+    Queue* pq1 = obj->_q1;
+    Queue* pq2 = obj->_q2;
+    
+    if(pq1->_head) {  // 如果_q1不为空
+        return pq1->_rear->_data;
+    }
+    else if(pq2->_head) {   // 如果_q2不为空
+        return pq2->_rear->_data;
+    }
+    return -1;
+}
+
+/** Returns whether the stack is empty. */
+bool myStackEmpty(MyStack* obj) {
+    if(!obj) {
+        return false;
+    }
+    
+    Queue* pq1 = obj->_q1;
+    Queue* pq2 = obj->_q2;
+    
+    if(pq1->_head || pq2->_head) {
+        return false;
+    }
+    return true;
+}
+
+void myStackFree(MyStack* obj) {
+    if(!obj) {
+        return;
+    }
+    
+    DestroyQueue(obj->_q1);
+    DestroyQueue(obj->_q2);
+	free(obj->_q1);
+    free(obj->_q2);
+    free(obj);
+}
+
+/**
+ * Your MyStack struct will be instantiated and called as such:
+ * MyStack* obj = myStackCreate();
+ * myStackPush(obj, x);
+ 
+ * int param_2 = myStackPop(obj);
+ 
+ * int param_3 = myStackTop(obj);
+ 
+ * bool param_4 = myStackEmpty(obj);
+ 
+ * myStackFree(obj);
+*/

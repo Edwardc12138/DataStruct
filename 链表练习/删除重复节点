@@ -1,0 +1,45 @@
+/*
+struct ListNode {
+    int val;
+    struct ListNode *next;
+    ListNode(int x) :
+        val(x), next(NULL) {
+    }
+};
+*/
+class Solution {
+public:
+    ListNode* deleteDuplication(ListNode* pHead)
+    {
+        if(!pHead && !pHead->next) {
+            return pHead;
+        }
+        
+        ListNode* ppre = NULL;
+        ListNode* pcur = pHead;
+        while(pcur && pcur->next) {
+            if(pcur->val == pcur->next->val) {
+                ListNode* pdel = pcur->next;
+                while(pdel && pdel->val == pcur->val) {
+                    pcur->next = pdel->next;
+                    free(pdel);
+                    pdel = pcur->next;
+                }
+                free(pcur);
+                if(ppre){
+                    ppre->next = pdel;
+                    pcur = ppre->next;
+                }
+                else {
+                    pHead = pdel;
+                    pcur = pHead;
+                }
+            }
+            else {
+                ppre = pcur;
+                pcur = ppre->next;
+            }
+        }
+        return pHead;
+    }
+};

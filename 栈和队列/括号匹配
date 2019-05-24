@@ -1,0 +1,124 @@
+typedef char SDataType;
+
+typedef struct Stack {
+    SDataType* _data;
+    int _top;           // 栈顶
+    int _size;          // 元素个数
+    int _cap;           // 栈容量
+} Stack;
+
+// 初始化
+void Init(Stack* ps) {
+    if(!ps) {
+        return;
+    }
+    
+    ps->_data = (SDataType*)malloc(sizeof(SDataType));
+    if(!ps->_data) {
+        return;
+    }
+    
+    ps->_top = -1;  // 栈空,无栈顶
+    ps->_size = 0;
+    ps->_cap = 1;   // 初始空间为1
+}
+
+// 销毁
+void Destroy(Stack* ps) {
+    if(!ps) {
+        return;
+    }
+    
+    free(ps->_data);
+    ps->_top = -1;
+    ps->_size = 0;
+    ps->_cap = 0;
+}
+
+// 重新分配空间
+void Resize(Stack* ps) {
+    if(!ps) {
+        return;
+    }
+    
+    int new_cap = ps->_cap * 2;
+    SDataType* new_data = (SDataType*)malloc(sizeof(SDataType) * new_cap);
+    if(!new_data) {
+        return;
+    }
+    
+    // 搬运数据
+    int i;
+    for(i = 0; i < ps->_size; ++i) {
+        new_data[i] = ps->_data[i];
+    }
+    free(ps->_data);
+    ps->_data = new_data;
+    ps->_cap = new_cap;
+}
+
+// 入栈
+void Push(Stack* ps, SDataType data) {
+    if(!ps) {
+        return;
+    }
+    
+    if(ps->_size == ps->_cap) { // 栈满,重新分配空间
+        Resize(ps);
+    }
+    
+    ps->_data[ps->_size++] = data;
+    ++ps->_top;    
+}
+
+// 出栈
+void Pop(Stack* ps) {
+    if(!ps) {
+        return;
+    }
+    
+    if(ps->_size) { // 栈不为空
+        --ps->_size;
+        --ps->_top;
+    }
+}
+
+// 栈顶元素
+SDataType Top(Stack* ps) {
+    if(!ps) {
+        return 0;
+    }
+    
+    if(ps->_size) {
+        return ps->_data[ps->_top];
+    }
+    return 0;
+}
+
+bool isValid(char * s){
+    Stack stack;
+    Init(&stack);
+    while(*s != '\0') {
+        if(*s == '(' || *s == '[' || *s == '{') {   // 左括号入栈
+            Push(&stack, *s);
+            ++s;
+        }
+        // 右括号出栈
+        else if(*s == ')' && '(' == Top(&stack) ||
+               *s == ']' && '[' == Top(&stack) ||
+               *s == '}' && '{' == Top(&stack)) {
+            Pop(&stack);
+            ++s;
+        }
+        else {
+            Destroy(&stack);
+            return false;
+        }
+    }
+    if(!stack._size) {
+        Destroy(&stack);
+        return true;
+    }
+    Destroy(&stack);
+    return false;
+}

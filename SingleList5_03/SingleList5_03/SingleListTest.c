@@ -58,18 +58,30 @@ int main() {
 	//	printf("√ª’“µΩ\n");
 	//}
 
-	PushBackData(&head, 1);
-	PushBackData(&head, 2);
-	PushBackData(&head, 3);
-	PushBackData(&head, 4);
-	PushBackData(&head, 2);
-	PushBackData(&head, 3);
-	PushBackData(&head, 3);
-	PushBackData(&head, 4);
-	PushBackData(&head, 2);
+	//PushBackData(&head, 1);
+	//PushBackData(&head, 2);
+	//PushBackData(&head, 3);
+	//PushBackData(&head, 4);
+	//PushBackData(&head, 2);
+	//PushBackData(&head, 3);
+	//PushBackData(&head, 3);
+	//PushBackData(&head, 4);
+	//PushBackData(&head, 2);
+	//PrintSL(head);
+
+	//RemoveAllSLNode(&head, 2);
+	//PrintSL(head);
+
+	PushFrontData(&head, 5);
+	PushFrontData(&head, 4);
+	PushFrontData(&head, 4);
+	PushFrontData(&head, 3);
+	PushFrontData(&head, 3);
+	PushFrontData(&head, 2);
+	PushFrontData(&head, 1);
 	PrintSL(head);
 
-	RemoveAllSLNode(&head, 2);
+	deleteDuplication(head);
 	PrintSL(head);
 	
 	system("pause");

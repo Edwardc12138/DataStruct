@@ -1,0 +1,218 @@
+
+// 栈实现
+typedef int SDataType;
+
+typedef struct Stack {
+    SDataType* _data;
+    int _top;           // 栈顶
+    int _size;          // 元素个数
+    int _cap;           // 栈容量
+} Stack;
+
+// 初始化
+void InitStack(Stack* ps) {
+    if(!ps) {
+        return;
+    }
+    
+    ps->_data = (SDataType*)malloc(sizeof(SDataType));
+    if(!ps->_data) {
+        return;
+    }
+    
+    ps->_top = -1;  // 栈空,无栈顶
+    ps->_size = 0;
+    ps->_cap = 1;   // 初始空间为1
+}
+
+// 销毁
+void DestroyStack(Stack* ps) {
+    if(!ps) {
+        return;
+    }
+    
+    free(ps->_data);
+    ps->_top = -1;
+    ps->_size = 0;
+    ps->_cap = 0;
+}
+
+// 重新分配空间
+void ResizeStack(Stack* ps) {
+    if(!ps) {
+        return;
+    }
+    
+    int new_cap = ps->_cap * 2;
+    SDataType* new_data = (SDataType*)malloc(sizeof(SDataType) * new_cap);
+    if(!new_data) {
+        return;
+    }
+    
+    // 搬运数据
+    int i;
+    for(i = 0; i < ps->_size; ++i) {
+        new_data[i] = ps->_data[i];
+    }
+    free(ps->_data);
+    ps->_data = new_data;
+    ps->_cap = new_cap;
+}
+
+// 入栈
+void PushStack(Stack* ps, SDataType data) {
+    if(!ps) {
+        return;
+    }
+    
+    if(ps->_size == ps->_cap) { // 栈满,重新分配空间
+        ResizeStack(ps);
+    }
+    
+    ps->_data[ps->_size++] = data;
+    ++ps->_top;    
+}
+
+// 出栈
+SDataType PopStack(Stack* ps) {
+    if(!ps) {
+        return -1;
+    }
+    
+    SDataType ret = -1;
+    if(ps->_size) { // 栈不为空
+        ret = ps->_data[ps->_top--];
+        --ps->_size;
+    }
+    return ret;
+}
+
+// 栈顶元素
+SDataType TopStack(Stack* ps) {
+    if(!ps) {
+        return 0;
+    }
+    
+    if(ps->_size) {
+        return ps->_data[ps->_top];
+    }
+    return 0;
+}
+
+// 队列实现
+typedef struct {
+    Stack* _ps_in;  // 入栈
+    Stack* _ps_out; // 出栈
+} MyQueue;
+
+/** Initialize your data structure here. */
+
+MyQueue* myQueueCreate() {
+    MyQueue* pq = (MyQueue*)malloc(sizeof(MyQueue));
+    if(!pq) {
+        return NULL;
+    }
+    
+    // 初始化成员
+    pq->_ps_in = (Stack*)malloc(sizeof(Stack));
+    if(!pq->_ps_in) {
+        free(pq);   // 初始化失败,释放队列
+        return NULL;
+    }
+    pq->_ps_out = (Stack*)malloc(sizeof(Stack));
+    if(!pq->_ps_out) {
+        free(pq->_ps_in);   // 释放入栈
+        free(pq);           // 释放队列
+        return NULL;
+    }
+    InitStack(pq->_ps_in);
+    InitStack(pq->_ps_out);
+    return pq;
+}
+
+/** Push element x to the back of queue. */
+void myQueuePush(MyQueue* obj, int x) {
+    if(!obj) {
+        return;
+    }
+    
+    PushStack(obj->_ps_in, x);
+}
+
+/** Removes the element from in front of queue and returns that element. */
+int myQueuePop(MyQueue* obj) {
+    if(!obj) {
+        return -1;
+    }
+    
+    if(!obj->_ps_out->_size) {  // 出栈栈空
+        if(!obj->_ps_in->_size) {  // 入栈栈空
+            return -1;
+        }
+        // 将入栈栈数据转移到出栈栈
+        int size = obj->_ps_in->_size;
+        for(int i = 0; i < size; ++i) {
+            PushStack(obj->_ps_out, PopStack(obj->_ps_in));
+        }
+    }
+    return PopStack(obj->_ps_out);
+}
+
+/** Get the front element. */
+int myQueuePeek(MyQueue* obj) {
+    if(!obj) {
+        return -1;
+    }
+    
+    if(!obj->_ps_out->_size) {  // 出栈栈空
+        if(!obj->_ps_in->_size) {  // 入栈栈空
+            return -1;
+        }
+        // 将入栈栈数据转移到出栈栈
+        int size = obj->_ps_in->_size;
+        for(int i = 0; i < size; ++i) {
+            PushStack(obj->_ps_out, PopStack(obj->_ps_in));
+        }
+    }
+    return TopStack(obj->_ps_out);
+}
+
+/** Returns whether the queue is empty. */
+bool myQueueEmpty(MyQueue* obj) {
+    if(!obj) {
+        return false;
+    }
+    
+    if(!obj->_ps_out->_size) {  // 出栈栈空
+        if(!obj->_ps_in->_size) {  // 入栈栈空
+            return true;
+        }
+    }
+    return false;
+}
+
+void myQueueFree(MyQueue* obj) {
+    if(!obj) {
+        return;
+    }
+    
+    DestroyStack(obj->_ps_in);
+    DestroyStack(obj->_ps_out);
+    free(obj->_ps_in);
+    free(obj->_ps_out);
+    free(obj);
+}
+
+/**
+ * Your MyQueue struct will be instantiated and called as such:
+ * MyQueue* obj = myQueueCreate();
+ * myQueuePush(obj, x);
+ 
+ * int param_2 = myQueuePop(obj);
+ 
+ * int param_3 = myQueuePeek(obj);
+ 
+ * bool param_4 = myQueueEmpty(obj);
+ 
+ * myQueueFree(obj);
+*/

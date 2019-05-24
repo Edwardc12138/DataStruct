@@ -47,3 +47,6 @@ SLNodePtr FindnSLNode(SLNodePtr head, const int n);
 
 // 移除所有值为data的节点
 void RemoveAllSLNode(SLNodePtr *head, SLDataType data);
+
+// 移除重复的节点
+SLNodePtr deleteDuplication(SLNodePtr pHead);

@@ -1,0 +1,46 @@
+/*
+struct ListNode {
+    int val;
+    struct ListNode *next;
+    ListNode(int x) : val(x), next(NULL) {}
+};*/
+class Partition {
+public:
+    ListNode* partition(ListNode* pHead, int x) {
+        // write code here
+        if(!pHead) {
+            return NULL;
+        }
+        
+        ListNode* pcur = pHead;    // 当前浏览节点
+        ListNode* ppre = NULL;     // 当前浏览节点上一节点,用来移除pcur
+        ListNode* plittle = NULL;  // 保存已分割后小于指定值部分的最后一个节点
+        while(pcur) {
+            if (pcur->val < x) {
+                // 小于x
+                if(ppre == plittle) {
+                    plittle = ppre = pcur;
+                }
+                else {
+                    ppre->next = pcur->next;
+                    if(plittle) {
+                        pcur->next = plittle->next;
+                        plittle->next = pcur;
+                    }
+                    else {
+                        pcur->next = pHead;
+                        pHead = pcur;
+                    }
+                }
+                plittle = pcur;
+                pcur = ppre->next;
+            }
+            else {
+                // 大于等于x
+                ppre = pcur;
+                pcur = ppre->next;
+            }
+        }
+        return pHead;
+    }
+};

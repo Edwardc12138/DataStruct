@@ -1,0 +1,127 @@
+
+typedef int QDT;
+
+typedef struct {
+    QDT* _data;     // 存储数据
+    int _size;      // 元素个数
+    int _cap;       // 容量
+    int _head;      // 队头
+    int _rear;      // 队尾
+} MyCircularQueue;
+
+/** Initialize your data structure here. Set the size of the queue to be k. */
+
+MyCircularQueue* myCircularQueueCreate(int k) {
+    MyCircularQueue* pcq = (MyCircularQueue*)malloc(sizeof(MyCircularQueue));
+    if(!pcq) {
+        return NULL;
+    }
+    
+    // 初始成员
+    pcq->_data = (QDT*)malloc(sizeof(QDT) * k);
+    if(!pcq->_data) {
+        free(pcq);      // 数据空间申请失败,释放队列
+        return NULL;
+    }
+    pcq->_size = 0;
+    pcq->_cap = k;
+    pcq->_head = 0;
+    pcq->_rear = -1;
+    
+    return pcq;
+}
+
+/** Insert an element into the circular queue. Return true if the operation is successful. */
+bool myCircularQueueEnQueue(MyCircularQueue* obj, int value) {
+    if(!obj || obj->_size == obj->_cap) {
+        return false;
+    }
+    
+    // 新增元素,尾指针后移
+    ++obj->_rear;
+    if(obj->_rear == obj->_cap) {   // 下标越界,移至开头
+        obj->_rear = 0;
+    }
+    obj->_data[obj->_rear] = value;
+    ++obj->_size;
+    return true;
+
+}
+
+/** Delete an element from the circular queue. Return true if the operation is successful. */
+bool myCircularQueueDeQueue(MyCircularQueue* obj) {
+    if(!obj || !obj->_size) {
+        return false;
+    }
+    
+    // 删除元素,头指针后移
+    ++obj->_head;
+    if(obj->_head == obj->_cap) {    // 下标越界,移至开头
+        obj->_head = 0;
+    }
+    --obj->_size;
+    return true;
+}
+
+/** Get the front item from the queue. */
+int myCircularQueueFront(MyCircularQueue* obj) {
+    if(!obj || !obj->_size) {
+        return -1;
+    }
+    
+    return obj->_data[obj->_head];
+}
+
+/** Get the last item from the queue. */
+int myCircularQueueRear(MyCircularQueue* obj) {
+    if(!obj || !obj->_size) {
+        return -1;
+    }
+    
+    return obj->_data[obj->_rear];
+}
+
+/** Checks whether the circular queue is empty or not. */
+bool myCircularQueueIsEmpty(MyCircularQueue* obj) {
+    if(!obj || obj->_size) {
+        return false;
+    }
+    
+    return true;
+}
+
+/** Checks whether the circular queue is full or not. */
+bool myCircularQueueIsFull(MyCircularQueue* obj) {
+    if(!obj || obj->_size != obj->_cap) {
+        return false;
+    }
+    
+    return true;
+}
+
+void myCircularQueueFree(MyCircularQueue* obj) {
+    if(!obj) {
+        return;
+    }
+    
+    free(obj->_data);
+    free(obj);
+}
+
+/**
+ * Your MyCircularQueue struct will be instantiated and called as such:
+ * MyCircularQueue* obj = myCircularQueueCreate(k);
+ * bool param_1 = myCircularQueueEnQueue(obj, value);
+ 
+ * bool param_2 = myCircularQueueDeQueue(obj);
+ 
+ * int param_3 = myCircularQueueFront(obj);
+ 
+ * int param_4 = myCircularQueueRear(obj);
+ 
+ * bool param_5 = myCircularQueueIsEmpty(obj);
+ 
+ * bool param_6 = myCircularQueueIsFull(obj);
+ 
+ * myCircularQueueFree(obj);
+*/
