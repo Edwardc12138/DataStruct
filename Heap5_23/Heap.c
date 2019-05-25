@@ -115,7 +115,9 @@ void InitEmptyHeap(Heap* ph, HeapType ht) {
 void DetroyHeap(Heap* ph) {
     assert(ph);
 
-    free(ph->_data);
+    if(ph->_data) {
+        free(ph->_data);
+    }
     ph->_cap = 0;
     ph->_size = 0;
     ph->_ht = NULL;
@@ -211,4 +213,34 @@ HeapDataType TopHeap(Heap* ph) {
     assert(ph);
 
     return ph->_data[0];
+}
+
+void HeapSort(HeapDataType* arr, int n, HeapType ht) {
+    if(!arr) {
+        return;
+    }
+
+    // 新建堆;
+    Heap heap;
+    heap._data = arr;
+    heap._size = n;
+    heap._cap = n;
+    heap._ht = ht;
+    
+    // 从最后一个不为叶节点的节点开始向下调整为大/小堆
+    // 找到最后一个不为叶节点的节点
+    int begin = (n - 2)/2;
+    // 循环从后向前向下调整节点
+    for(; begin >= 0; --begin) {
+        _AdjustDown(&heap, begin);
+    }
+
+    while(--heap._size) {
+        // 交换堆顶和最后一个数据
+        _Swap(arr + 0, arr + heap._size);
+        // 向下调整堆
+        _AdjustDown(&heap, 0);
+    }
+    heap._data = NULL;
+    DetroyHeap(&heap);
 }

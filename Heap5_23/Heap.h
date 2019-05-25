@@ -44,3 +44,6 @@ int EmptyHeap(Heap* ph);
 
 // 获取堆顶元素
 HeapDataType TopHeap(Heap* ph);
+
+// 堆排
+void HeapSort(HeapDataType* arr, int n, HeapType ht);
